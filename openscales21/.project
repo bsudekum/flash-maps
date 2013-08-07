@@ -15,4 +15,11 @@
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] libs</name>
+			<type>2</type>
+			<location>/Users/BobbySudekum/Documents/projects/labs/flash-maps/openscales-1.2.1/libs</location>
+		</link>
+	</linkedResources>
 </projectDescription>

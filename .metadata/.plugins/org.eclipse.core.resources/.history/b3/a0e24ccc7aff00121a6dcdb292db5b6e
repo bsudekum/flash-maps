@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Simple Modest Maps Demo Application.
+*
+* This application fetches an XML file, parses it for Traffic Events and plots markers
+* on the map corresponding to the traffic events. You can centre a marker by clicking on
+* the item in the grid or highlight the appropriate item by selecting the marker.
+* 
+* Alistair Rutherford, www.netthreads.co.uk, Nov 2007.
+-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+				layout="absolute" 
+				xmlns:modest="com.modestmaps.flex.*"
+				creationComplete="init()" viewSourceURL="srcview/index.html">
+	
+	<mx:HTTPService id="dataService" 
+					url="site/data/strathclyde.xml" 
+					result="onResult(event)" 
+					fault="onFault(event)"
+					resultFormat="e4x"/>
+	
+	<mx:Script>
+		<![CDATA[
+			import com.netthreads.traffic.assets.TrafficAssetDictionary;
+			import mx.rpc.events.ResultEvent;
+			import com.netthreads.traffic.controller.EventMarker;
+			import mx.collections.ArrayCollection;
+			import mx.rpc.events.FaultEvent;
+			
+			import com.modestmaps.mapproviders.OpenStreetMapProvider;
+			import com.modestmaps.geo.Location;
+			
+			import com.netthreads.traffic.vo.EventVO;
+			import com.netthreads.traffic.model.IParser;
+			import com.netthreads.traffic.model.ParserEvent;
+			
+			[Bindable]
+			private var zoomLevel:int = 11;
+			
+			[Bindable]
+			private var trafficEvents:ArrayCollection = null;
+			
+			/**
+			 * Initialise components.
+			 * 
+			 */		
+			private function init():void
+			{
+				// Got to make this stand a out a bit.
+				scaleSlider.filters = [ new GlowFilter(0x0000FF) ];
+				
+				// Master list
+				trafficEvents = new ArrayCollection();
+				
+				// Fetch that data
+				dataService.send();
+			}
+			
+			/**
+			 * Handle result of request.
+			 * 
+			 */		
+			public function onResult(event:ResultEvent):void
+			{
+				// Extract VO's from result	
+				var xmlResult:XML = XML(event.result);
+				
+				var parser:IParser = new ParserEvent();
+				
+				trace(xmlResult.title);
+				
+				var values:ArrayCollection = parser.parse(xmlResult);
+				
+				var dictionary:TrafficAssetDictionary = TrafficAssetDictionary.getInstance();
+				
+				for each (var value:* in values) // e4x
+				{
+					var trafficEvent:EventVO = EventVO(value);
+					
+					trace(trafficEvent);
+					
+					// Add to master list
+					trafficEvents.addItem(trafficEvent);
+					
+					// Get Icon for severity
+					var icon:Class = dictionary.lookup(trafficEvent.type);
+					
+					// Create Marker
+					var marker:EventMarker = new EventMarker(trafficEvent, icon);
+					
+					marker.addEventListener(MouseEvent.CLICK, onMarkerClick);
+					myMap.map.putMarker(trafficEvent.id, 
+						new Location(trafficEvent.centreLatitude, trafficEvent.centreLongitude), 
+						marker);
+				}
+			}
+			
+			/**
+			 * Request fault.
+			 * 
+			 */
+			public function onFault(event:FaultEvent):void
+			{
+				trace("Error fetching data: "+event);
+			}
+			
+			/**
+			 * Adjust zoom level.
+			 * 
+			 */
+			private function onZoomChange(ev:Event):void
+			{
+				zoomLevel = scaleSlider.value;
+			}
+			
+			/**
+			 * Handle clicking on item in grid.
+			 *
+			 */        
+			public function onClick(event:Object):void 
+			{
+				if (event.currentTarget.selectedItem!=null)
+				{	
+					var selectedItem:EventVO = event.currentTarget.selectedItem;
+					
+					myMap.center = new Location(selectedItem.centreLatitude, selectedItem.centreLongitude);
+				}
+			}
+			
+			/**
+			 * Handle clicking marker.
+			 *
+			 */        
+			public function onMarkerClick(event:Object):void 
+			{
+				var target:EventMarker = EventMarker(event.target);
+				
+				if (target!=null)
+				{
+					var targetIndex:Number = trafficEvents.getItemIndex(target.markerData);
+					myGrid.scrollToIndex(targetIndex);
+					myGrid.selectedIndex = targetIndex;
+				}
+				trace(event);
+			}
+			
+			/**
+			 * Launch page with target url.
+			 *
+			 */
+			private function jumpTo(url:String):void
+			{
+				var link:URLRequest=new URLRequest(url);
+				navigateToURL(link,"_this");
+			} 			
+		]]>
+	</mx:Script>
+	
+	<mx:HDividedBox width="100%" height="100%">
+		
+		<mx:Panel width="70%" height="100%" headerHeight="5" layout="absolute">
+			
+			<modest:Map id="myMap" width="100%" height="100%"
+						provider="{new OpenStreetMapProvider()}"
+						zoom="{zoomLevel}"
+						center="55.816, -4.15"/>
+			
+			<mx:VSlider id="scaleSlider" 
+						x="-35" y="0" 
+						width="114" 
+						minimum="0" 
+						maximum="19" 
+						value="{zoomLevel}"
+						dataTipPlacement="top" 
+						tickColor="black" 
+						snapInterval="1" tickInterval="2" 
+						allowTrackClick="true" 
+						liveDragging="true"
+						change="onZoomChange(event)"/>
+ 
+		</mx:Panel>
+		
+		<mx:Panel width="30%" height="100%" headerHeight="5">
+			<mx:DataGrid id="myGrid" width="100%" height="100%"
+						 variableRowHeight="true"
+						 itemClick="onClick(event);"
+						 dataProvider="{trafficEvents}">
+				<mx:columns>
+					<mx:Array>
+						<mx:DataGridColumn headerText="Category" dataField="category" textAlign="left" wordWrap="true"/>
+						<mx:DataGridColumn headerText="Summary" dataField="summary" textAlign="left" wordWrap="true"/>
+						<mx:DataGridColumn headerText="Severity" dataField="severity" textAlign="left" wordWrap="true"/>
+					</mx:Array>
+				</mx:columns>
+			</mx:DataGrid>
+		</mx:Panel>
+		
+	</mx:HDividedBox>
+	
+</mx:Application>

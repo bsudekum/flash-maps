@@ -1,0 +1,57 @@
+package com.tomlauck.util
+{
+	import com.adobe.serialization.json.JSON;
+	
+	import flash.events.Event;
+	
+	import mx.rpc.events.*;
+	import mx.rpc.http.HTTPService;
+	
+	public class JSONService extends HTTPService 
+	{
+		[Bindable]
+		public var deserializedData:Object;
+		
+		private var _service:HTTPService;
+		
+		[Inspectable]
+		private var _feedUrl:String;
+		
+		[Inspectable]
+		private var _callback:Function;
+		
+		public function JSONService(){
+			
+		}
+		private function JSONServiceHandler(event:ResultEvent):void{
+			var rawData:String = String(event.result);
+			deserializedData = (JSON.decode(rawData) as Object);
+			dispatchEvent(new Event("dataDeserialized"));    
+		}
+		
+		public function decode(parameters:Object = null):void{
+			_service = new HTTPService();
+			_service.resultFormat = "text";
+			_service.url = _feedUrl;
+			_service.addEventListener(ResultEvent.RESULT, JSONServiceHandler);
+			_service.send(parameters);
+		}
+		
+		public function get feedUrl() : String {
+			return _feedUrl;
+		}
+
+		public function set feedUrl(value : String) : void {
+			_feedUrl = value;
+		}
+		
+		public function get callbackFunction():Function{
+			return _callback;
+		}
+	
+		public function set callbackFunction(value:Function):void{
+			_callback = value;
+			addEventListener("dataDeserialized", _callback);
+		}
+	}
+}

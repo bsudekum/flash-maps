@@ -19,7 +19,7 @@ package com.modestmaps.mapproviders
 
 	    public function toString() : String
 	    {
-	        return "OPEN_STREET_MAP";
+	        return "MapBox";
 	    }
 	
 	    public function getTileUrls(coord:Coordinate):Array
@@ -33,3 +33,4 @@ package com.modestmaps.mapproviders
 	    
 	}
 }
+

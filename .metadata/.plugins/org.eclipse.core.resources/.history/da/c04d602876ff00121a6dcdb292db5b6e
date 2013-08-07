@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" 
+	xmlns:modest="com.modestmaps.flex.*" 
+	creationComplete="creationComplete()" 
+	xmlns:control="com.tomlauck.control.*" 
+	xmlns:filters="flash.filters.*" 
+	xmlns:Components="Components.*">
+	<mx:Metadata>
+[Inspectable] [Event(name="moreInfoClicked", type="flash.events.Event")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+import mx.core.UIComponent;
+import mx.containers.*;
+import mx.controls.Button;
+
+import flash.events.TextEvent;
+import flash.events.Event;
+
+import com.modestmaps.Map;
+import com.modestmaps.core.MapExtent;
+import com.modestmaps.events.MapEvent;
+import com.modestmaps.events.MarkerEvent;
+import com.modestmaps.geo.Location;
+import com.modestmaps.mapproviders.*;
+import com.modestmaps.mapproviders.google.*;
+import com.modestmaps.mapproviders.microsoft.*;
+import com.modestmaps.mapproviders.yahoo.*;
+
+import com.stamen.twisted.Reactor;
+
+import com.tomlauck.control.MapMarker;
+
+private const road:String = "YAHOO_ROAD";
+private const hybrid:String = "YAHOO_HYBRID";
+private const aerial:String = "YAHOO_AERIAL";
+
+private var selectedView:*;
+private var nLat:Number = 52;
+private var sLat:Number = 24;
+private var eLon:Number = -126;
+private var wLon:Number = -74;
+
+protected var _openMarker:MapMarker;
+protected var _markersLoaded:Boolean = false;
+protected var _geoData:Object = new Object();
+
+[Bindable] [Inspectable]
+public var markerOpen:Boolean = true;
+[Bindable] [Inspectable]
+public var markerOpenIndex:int = -1;
+public var clickedMarker:int;
+
+[Bindable] [Inspectable]
+public function get geoData():Object{	
+	return _geoData;
+}
+public function set geoData(value:Object):void{	
+	_geoData = value;
+	displayResults();
+}
+[Bindable] [Inspectable]
+public function get markersLoaded():Boolean{	
+	return _markersLoaded;
+}
+public function set markersLoaded(value:Boolean):void{	
+	_markersLoaded = value;
+}
+[Bindable]
+private function get openMarker():MapMarker{	
+	return _openMarker;
+}
+private function set openMarker(value:MapMarker):void{	
+	_openMarker = value;
+	markerOpen = true;
+}
+public function openMarkerById(markerId:int):void{
+	var tempMarker:MapMarker = modestMap.map.getMarker(markerId.toString()) as MapMarker;
+	if (tempMarker){
+		showMarker(tempMarker);
+		tempMarker.openMarker();
+	}
+}
+public function closeAllMarkers():void{
+	if (openMarker){
+		openMarker.closeMarker();
+		markerOpen = false;
+	}
+}
+private function creationComplete():void{
+	
+	//add event listeners for map
+	modestMap.map.addEventListener(MapEvent.RESIZED, resizeChange);
+	modestMap.map.addEventListener(MapEvent.EXTENT_CHANGED, extentChange);
+	modestMap.map.addEventListener(MarkerEvent.ENTER, onMarkerEnters);
+	modestMap.map.addEventListener(MarkerEvent.LEAVE, onMarkerLeaves);
+	
+	//add marker listeners
+	addEventListener("markerCloseClicked", mapMarkerCloseClicked);
+	addEventListener("markerOpened", mapMarkerOpened);
+	
+	//default map is road view
+	selectedView = roadMap;
+}
+private function resizeChange(e:MapEvent):void{}
+private function extentChange(e:MapEvent = null):void{
+	zoomTool.zoomLevel = modestMap.map.getZoom();	
+}
+private function onMarkerEnters(e:MarkerEvent):void{}
+private function onMarkerLeaves(e:MarkerEvent):void{}
+private function showMarker(marker:MapMarker):void{
+	marker.parent.setChildIndex(marker, marker.parent.numChildren - 1);
+	if(openMarker && openMarker != marker) {
+    	openMarker.closeMarker();
+    }    
+    openMarker = marker;
+}
+private function mapMarkerOpened(e:Event = null):void{	
+	markerOpenIndex = e.target.parent.markerId - 1;
+	modestMap.map.setCenter(e.target.parent.point);
+}
+private function displayResults():void {
+	if(geoData.length > 0){
+		
+		for(var i:int = 0; i < geoData.length; i++){
+			var tempHtml:String = "" +  
+							"<p><b>" + 
+								geoData[i].title + 
+							"</b></p>" + 
+							"<p>" + 
+								geoData[i].location + 
+							"<br></p>" + 
+							"<p>" + 
+								geoData[i].description + 
+							"</p>" + 
+							"<p>" + 
+								
+							"</p>";	
+			var link:String = "<a href=\"event:" + i + "\"><b>CLICK ME!</b></a><br>";								 
+			var flexMarker:MapMarker = new MapMarker(i + 1, tempHtml, link);
+			flexMarker.filters = [dropShadow];
+			flexMarker.link.addEventListener(TextEvent.LINK, linkClick);
+			flexMarker.point =  new Location(geoData[i].geo.latitude, geoData[i].geo.longitude);
+			flexMarker.addEventListener(MouseEvent.CLICK, markerClick);
+			modestMap.map.putMarker(geoData[i].resultId.toString(), flexMarker.point, flexMarker);
+			
+			//var flexMarker:BasicMarker = new BasicMarker();
+			//modestMap.map.putMarker(geoData[i].resultId.toString(), new Location(geoData[i].geo.latitude, geoData[i].geo.longitude), flexMarker);
+			
+			if(i == geoData.length - 1) markersLoaded = true;
+			
+			extentChange();
+		}
+	}
+	else{
+		//there is no geo data
+	}
+}
+private function markerClick(e:* = null):void{
+	if (e.currentTarget)
+		showMarker(e.currentTarget as MapMarker);  
+}
+private function linkClick(e:TextEvent = null):void{
+	clickedMarker = new int(e.text);
+	dispatchEvent(new Event("moreInfoClicked"));
+}
+private function mapMarkerCloseClicked(e:Event = null):void{
+	markerOpen = false;
+}
+private function zoomChange(e:Event = null):void {
+    modestMap.map.setZoom(e.target.zoomLevel.toString());
+}
+		]]>
+	</mx:Script>
+	<filters:DropShadowFilter 
+		id="dropShadow" 
+		alpha="0.8" 
+		angle="45" 
+		blurX="3" 
+		blurY="3" 
+		distance="1" />
+	<modest:Map 
+		id="modestMap" 
+		top="0" left="0" bottom="0" 
+		height="100%" width="100%" 
+		extent="{new MapExtent(nLat, sLat, eLon, wLon)}" 
+		provider="{new YahooRoadMapProvider}"  />
+	<mx:VBox id="mapProviders" right="15" top="10">
+		<Components:ZoomTool 
+			id="zoomTool" 
+			zoomLevel="5" 
+			zoomChange="zoomChange(event)" />
+		<mx:Button 
+			id="roadMap" 
+			enabled="false"
+			label="Street" 
+			click="if(modestMap.map.getMapProvider() != road){ 
+				modestMap.map.setMapProvider(new YahooRoadMapProvider);
+				selectedView.enabled = true;
+				roadMap.enabled = false;
+				selectedView = roadMap;
+			}" />
+		<mx:Button 
+			id="hybridMap" 
+			label="Hybrid" 
+			click="if(modestMap.map.getMapProvider() != hybrid){ 
+				modestMap.map.setMapProvider(new YahooHybridMapProvider);
+				selectedView.enabled = true;
+				hybridMap.enabled = false;
+				selectedView = hybridMap;
+			}" />
+		<mx:Button 
+			id="aerialMap" 
+			label="Aerial" 
+			click="if(modestMap.map.getMapProvider() != aerial){ 
+				modestMap.map.setMapProvider(new YahooAerialMapProvider);
+				selectedView.enabled = true;
+				aerialMap.enabled = false;
+				selectedView = aerialMap;
+			}" />
+	</mx:VBox>
+</mx:Module>

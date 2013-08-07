@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	creationComplete="creationComplete()" 
+	horizontalScrollPolicy="off" 
+	verticalScrollPolicy="off" 
+	xmlns:local="*" 
+	width="{markerContainer.width}" 
+	height="{markerContainer.height}" 
+	xmlns:Components="Components.*">
+	<mx:Metadata>
+[DefaultProperty("children")]
+[Inspectable] [Event(name="markerOpened", type="flash.events.Event")]
+[Inspectable] [Event(name="markerCloseClicked", type="flash.events.Event")]
+[Inspectable] [Event(name="markerClosed", type="flash.events.Event")]
+	</mx:Metadata>
+    <mx:Script>
+        <![CDATA[
+import mx.events.FlexMouseEvent; 
+import mx.effects.easing.Exponential;
+import com.caurina.transitions.Tweener;
+
+[Bindable] private var animationDuration:int = 650;
+[Bindable] [Inspectable] public var spacing:int = 5;
+[Bindable] public var startWidth:int = 26;
+[Bindable] public var interimWidth:int;
+[Bindable] public var endWidth:int;
+[Bindable] public var startHeight:int = 29;
+[Bindable] public var interimHeight:int;
+[Bindable] public var endHeight:int;
+[Bindable] public var startY:int;
+[Bindable] public var interimY:int;
+[Bindable] public var endY:int;
+
+protected var _children:Array = [];
+protected var _childrenChanged:Boolean = false;
+protected var _dropWidth:int;
+protected var _label:String;
+
+[Bindable] private var _menuEnabled:Boolean = true;
+
+[Bindable] [Inspectable]
+public function get dropWidth():int{
+	return _dropWidth;
+}         
+public function set dropWidth(value:int):void{
+	_dropWidth = value;
+}
+[Bindable] [Inspectable] 
+public override function get label():String {
+    return _label;
+}
+public override function set label(value:String):void {
+    _label = value; 
+}
+public function get children():Array {
+    return _children;
+}
+public function set children( value:* ):void
+{
+    if( value is DisplayObject )
+        _children = [ value ];
+    else
+        _children = value;
+    
+    _childrenChanged = true;
+    invalidateProperties();
+} 
+public function creationComplete():void{
+	
+	if(!menuEnabled){
+		width = startWidth;
+		height = startHeight;
+		wrapper.y = 0;
+	}
+}
+public function get menuEnabled():Boolean {
+	return _menuEnabled;
+}
+public function set menuEnabled(value:Boolean):void {
+	_menuEnabled = value;
+}
+protected override function commitProperties():void {
+    super.commitProperties();
+    
+    if( _childrenChanged )
+    {
+        for each( var child:DisplayObject in _children )
+        {
+            dropdownContainer.addChild( child );
+        }
+    }    
+}
+public function toggle(event:* = null):void{
+	if(menuEnabled){
+		if(!dropdownContainer.visible)
+			show();
+		else
+			hide();
+	}
+}
+public function show():void{
+	if(menuEnabled && !dropdownContainer.visible){
+		menuTarget.visible = false;
+		dropdownContainer.visible = true;
+		dropdownContainer.setFocus();
+		actionButton.visible = true;
+		Tweener.addTween(wrapper, {
+			y:0,
+			width:markerContainer.width, 
+			height:markerContainer.height,
+			time:(animationDuration / 1000), transition:Exponential.easeOut});
+		dispatchEvent(new Event("markerOpened", true));
+	}
+}
+public function hide():void{
+	if(menuEnabled && dropdownContainer.visible){
+		actionButton.visible = false; 
+		Tweener.addTween(wrapper, {
+			y:0 + markerContainer.height - startHeight,
+			width:startWidth, 
+			height:startHeight,
+			time:(animationDuration / 1000), transition:Exponential.easeOut});
+		dropdownContainer.visible = false;
+		menuTarget.visible=true;
+		dispatchEvent(new Event("markerClosed", true));
+	}
+}
+
+        ]]>
+    </mx:Script> 
+    <mx:Fade id="dropDownShow" alphaFrom="0" alphaTo="100"  duration="{animationDuration}" easingFunction="Exponential.easeInOut" />
+	<mx:Fade id="dropDownHide" alphaFrom="100" alphaTo="0"  duration="{animationDuration}" easingFunction="Exponential.easeInOut" />
+	<mx:Canvas 
+		id="markerContainer"
+		width="{dropdownContainer.width + (spacing)}"
+		height="{dropdownContainer.height + (spacing)}" >
+		<mx:Canvas 
+			id="wrapper"
+			y="{0 + markerContainer.height - startHeight}"
+			width="{startWidth}"
+			height="{startHeight}"
+			horizontalScrollPolicy="off" 
+			verticalScrollPolicy="off"
+			styleName="CustomPOIMarker" >
+			<mx:Panel
+		    	id="dropdownContainer" 
+		    	x="{spacing/2}"
+		    	y="{(spacing/2)}"
+		    	visible="false"
+				showEffect="dropDownShow"
+				buttonMode="true"
+				paddingTop="24"
+				paddingRight="15"
+				paddingBottom="18"
+				paddingLeft="3" />
+			<Components:CloseButton
+				id="actionButton"
+				click="toggle(); dispatchEvent(new Event('markerCloseClicked', true));" 
+				visible="false" 
+				minWidth="150" 
+				minHeight="80"
+				showEffect="fadeIn"
+				hideEffect="fadeOut" 
+				buttonMode="true" 
+				top="{spacing}" 
+				x="{dropdownContainer.x + dropdownContainer.width - actionButton.width - (spacing * 3)}"/>
+		</mx:Canvas>
+		<mx:Text 
+	    	id="menuTarget" 
+	    	text="{label}"
+	    	width="{startWidth}"
+	    	height="{startHeight}"
+	    	styleName="CustomPOILabel" 
+	    	buttonMode="true" 
+	    	useHandCursor="true"
+			showEffect="true" 
+			selectable="false"
+	    	y="{wrapper.y}" 
+	    	click="show();"  />
+	</mx:Canvas>
+</mx:Canvas>

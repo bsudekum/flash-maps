@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	styleName="zoomTool">
+<mx:Metadata>
+[Event(name="zoomChange", type="flash.events.Event")]
+</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+protected var _zoomLevel:int;
+
+[Bindable]
+public function get zoomLevel():int{
+	return _zoomLevel;
+}
+public function set zoomLevel(value:int):void{
+	_zoomLevel = value;
+}
+private function zoomInChange(e:Event = null):void{
+	if(zoomSlider.maximum > zoomLevel) { 
+		zoomLevel ++;
+		dispatchEvent(new Event("zoomChange", true)); 
+	}
+}
+private function zoomOutChange(e:Event = null):void{
+	if(zoomSlider.minimum < zoomLevel) { 
+		zoomLevel --;
+		dispatchEvent(new Event("zoomChange", true)); 
+	}
+}
+private function zoomSlide(e:Event = null):void{
+	zoomLevel = zoomSlider.value; 
+	dispatchEvent(new Event("zoomChange", true));
+}
+		]]>
+	</mx:Script>
+	<mx:VBox>
+		<mx:Button 
+			id="zoomIn"
+			label="Zoom In"
+			click="zoomInChange(event)"/>
+		<mx:VSlider 
+			id="zoomSlider"
+			minimum="3" 
+			maximum="17" 
+			value="{zoomLevel}"
+			dataTipPlacement="top" 
+			snapInterval="1" 
+			tickInterval="1" 
+			allowTrackClick="true"
+			showTrackHighlight="false"
+			liveDragging="true"
+			invertThumbDirection="true"
+			showDataTip="false"
+	        change="zoomSlide(event)"/>
+		<mx:Button 
+			id="zoomOut" 
+			label="Zoom Out"
+			click="zoomOutChange()"/>
+	</mx:VBox>
+</mx:Canvas>

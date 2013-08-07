@@ -1,0 +1,37 @@
+/**
+ * MapProvider for Open Street Map data.
+ * 
+ * @author migurski
+ * $Id$
+ */
+package com.modestmaps.mapproviders
+{ 
+	import com.modestmaps.core.Coordinate;
+	
+	public class MapBox
+		extends AbstractMapProvider
+		implements IMapProvider
+	{
+	    public function MapBox(minZoom:int=MIN_ZOOM, maxZoom:int=MAX_ZOOM)
+        {
+            super(minZoom, maxZoom);
+        }
+
+	    public function toString() : String
+	    {
+	        return "MapBox";
+	    }
+	
+	    public function getTileUrls(coord:Coordinate):Array
+	    {
+	        var sourceCoord:Coordinate = sourceCoordinate(coord);
+	        if (sourceCoord.row < 0 || sourceCoord.row >= Math.pow(2, coord.zoom)) {
+	        	return [];
+	        }
+	        return [ 'http://c.tiles.mapbox.com/v3/bobbysud.map-rm7pg202/'+(sourceCoord.zoom)+'/'+(sourceCoord.column)+'/'+(sourceCoord.row)+'.png' ];
+	    }
+	    
+	}
+}
+import com.modestmaps.mapproviders;
+

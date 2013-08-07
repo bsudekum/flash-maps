@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:util="com.tomlauck.util.*" creationComplete="onCreationComplete()" xmlns:tomlauck="*" xmlns:Components="Components.*" viewSourceURL="srcview/index.html">
+	<util:JSONService 
+		id="MapService"
+		callbackFunction="onJSONLoaded" 
+		feedUrl="feed.json"    
+		/>
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			private var _results:Object;
+			
+			[Bindable]
+			public function get Results():Object{
+				return _results;
+			}
+			public function set Results(value:Object):void{
+				_results = value;
+			} 
+			private function onCreationComplete():void{
+				MapService.decode();
+			}
+			private function onJSONLoaded(e:Event):void{
+				Results = e.target.deserializedData.results;
+			}
+			private function onMapMarkerMoreInfoClicked():void{
+				Alert.show("Marker " + (MapDisplay.clickedMarker + 1).toString() + " Clicked");
+			}
+		]]>
+	</mx:Script>
+	<tomlauck:Flex3Map id="MapDisplay" geoData="{Results}" moreInfoClicked="onMapMarkerMoreInfoClicked()" height="100%" width="100%"/>
+	<mx:Panel label="Click A Number">
+		<mx:HBox>
+			<mx:Text>
+				<mx:htmlText>
+					<![CDATA[Click »]]>
+				</mx:htmlText>
+			</mx:Text>
+			<mx:Button label="1" click="MapDisplay.openMarkerById(1);"/>
+			<mx:Button label="2" click="MapDisplay.openMarkerById(2);"/>
+			<mx:Button label="3" click="MapDisplay.openMarkerById(3);"/>
+			<mx:Button label="4" click="MapDisplay.openMarkerById(4);"/>
+			<mx:Button label="5" click="MapDisplay.openMarkerById(5);"/>
+			<mx:Button label="6" click="MapDisplay.openMarkerById(6);"/>
+			<mx:Button label="7" click="MapDisplay.openMarkerById(7);"/>
+			<mx:Button label="8" click="MapDisplay.openMarkerById(8);"/>
+			<mx:Button label="9" click="MapDisplay.openMarkerById(9);"/>
+			<mx:Button label="10" click="MapDisplay.openMarkerById(10);"/>
+		</mx:HBox>
+	</mx:Panel>
+	<mx:Style source="Style/global.css"/>
+</mx:Application>

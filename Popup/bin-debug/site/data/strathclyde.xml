@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="panellist.xsl"?>
+<page>
+	<title>BBC Travel News</title>
+	<region>BBC Travel News | Strathclyde</region>
+	<url>site/data/strathclyde.xml</url>
+	<center lat="55.858639875" lng="-4.3204216875"/>
+	<location id="1853043" category="sheer weight of traffic" severity="medium" start="2007-08-19T12:02:32+0" end="2007-08-19T17:31:44+0">
+		<point lat="55.87112" lng="-4.19931"/>
+		<summary class="regionSummary">
+			<title>M8</title>
+			<line>M8 Glasgow City - Traffic heavier than normal eastbound between J13, Provan and J15, Townhead in Glasgow, delays of 20 minutes.</line>
+		</summary>
+	</location>
+	<location id="1853130" category="slow traffic" severity="medium" start="2007-08-19T13:33:18+0" end="2007-08-19T18:01:15+0">
+		<point lat="55.802548" lng="-3.965143"/>
+		<summary class="regionSummary">
+			<title>A723</title>
+			<line>A723 North Lanarkshire - Very slow traffic on Merry Street both ways at the B7029 Motherwell Road junction.</line>
+		</summary>
+	</location>
+	<location id="1853136" category="slow traffic" severity="slight" start="2007-08-19T13:53:54+0" end="2007-08-19T19:20:51+0">
+		<point lat="55.890141" lng="-4.178924"/>
+		<summary class="regionSummary">
+			<title>M80</title>
+			<line>M80 Glasgow City - Slow traffic southbound at J2, Robroyston, delays of 15 minutes.</line>
+		</summary>
+	</location>
+	<location id="1852778" category="slow traffic" severity="slight" start="2007-08-19T07:48:03+0" end="2007-08-19T20:43:40+0">
+		<point lat="55.850088" lng="-4.291952"/>
+		<summary class="regionSummary">
+			<title>M8</title>
+			<line>M8 Glasgow City - Slow traffic eastbound between J22, Plantation and J20, Kingston Bridge in Glasgow.</line>
+		</summary>
+	</location>
+	<location id="1834530" category="roadworks" severity="severe" start="2007-08-09T10:28:11+0" end="2007-08-19T23:59:00+0">
+		<point lat="55.777235" lng="-4.356502"/>
+		<summary class="regionSummary">
+			<title>M77</title>
+			<line>M77 East Renfrewshire - Lane closed on exit slip road southbound at J4, Crookfur Road in Netherplace, because of roadworks.</line>
+		</summary>
+	</location>
+	<location id="1831020" category="overhead services work" severity="severe" start="2007-08-08T06:29:09+0" end="2007-09-30T23:59:00+0">
+		<point lat="55.900702" lng="-4.48488"/>
+		<summary class="regionSummary">
+			<title>M898</title>
+			<line>M898 Renfrewshire - Exit slip road closed southbound at Erskine Bridge in Erskine, because of bridge maintenance work. Diversion in operation.</line>
+		</summary>
+	</location>
+	<location id="1795146" category="roadworks" severity="severe" start="2007-07-20T09:53:49+0" end="2007-08-30T23:59:00+0">
+		<point lat="55.853563" lng="-4.08975"/>
+		<summary class="regionSummary">
+			<title>A8</title>
+			<line>A8 Glasgow City - Glasgow And Edinburgh Road closed westbound between the Ballieston Interchange junction and the A89 Coatbridge Road junction in Bargeddie, because of roadworks. Diversion in operation.</line>
+		</summary>
+	</location>
+	<location id="1588702" category="roadworks" severity="severe" start="2007-04-10T14:16:35+0" end="2007-10-30T17:11:00+0">
+		<point lat="55.878957" lng="-4.386916"/>
+		<summary class="regionSummary">
+			<title>A741</title>
+			<line>A741 Renfrewshire - Canal Street closed westbound between the Renfrew Cross junction and the A8 Inchinnan Road junction in Renfrew, because of roadworks.</line>
+		</summary>
+	</location>
+	<location id="1768950" category="overhead services work" severity="medium" start="2007-07-08T17:22:32+0" end="2007-11-30T18:19:25+0">
+		<point lat="55.847672" lng="-4.42179"/>
+		<summary class="regionSummary">
+			<title>A726</title>
+			<line>A726 Renfrewshire - Restrictions on Weir Street both ways between the Abercorn Street junction and the Gilmour Street junction in Paisley, because of bridge maintenance work.</line>
+		</summary>
+	</location>
+	<location id="1782698" category="overhead services work" severity="medium" start="2007-07-14T16:40:43+0" end="2007-11-30T23:59:00+0">
+		<point lat="55.847703" lng="-4.423869"/>
+		<summary class="regionSummary">
+			<title>Abercorn Bridge</title>
+			<line>Renfrewshire - Bridge maintenance work on Gilmour Street both ways at the A726 Old Sneddon Street junction in Paisley, because of roadworks.</line>
+		</summary>
+	</location>
+	<location id="1811569" category="roadworks" severity="medium" start="2007-07-28T15:10:29+0" end="2007-08-30T23:59:00+0">
+		<point lat="55.837427" lng="-4.480777"/>
+		<summary class="regionSummary">
+			<title>Glenpatrick Road</title>
+			<line>Renfrewshire - Roadworks on Glenpatrick Road both ways at the B789 Main Road junction in Glasgow.</line>
+		</summary>
+	</location>
+	<location id="1843193" category="roadworks" severity="medium" start="2007-08-14T09:07:25+0" end="2007-10-15T23:59:00+0">
+		<point lat="55.873509" lng="-4.368421"/>
+		<summary class="regionSummary">
+			<title>Old Govan Road</title>
+			<line>Renfrewshire - Junction improvements on Old Govan Road at the King's Inch Road junction in Renfrew.</line>
+		</summary>
+	</location>
+	<location id="1843194" category="roadworks" severity="medium" start="2007-08-14T09:07:51+0" end="2007-10-15T23:59:00+0">
+		<point lat="55.873223" lng="-4.36551"/>
+		<summary class="regionSummary">
+			<title>Kings Inch Drive</title>
+			<line>Glasgow City - Junction improvements on Kings Inch Drive at the Old Govan Road junction in Renfrew.</line>
+		</summary>
+	</location>
+	<location id="1772162" category="roadworks" severity="medium" start="2007-07-10T07:07:19+0" end="2007-08-23T08:04:38+0">
+		<point lat="55.853555" lng="-4.34073"/>
+		<summary class="regionSummary">
+			<title>M8</title>
+			<line>M8 Glasgow City - Lane closed on exit slip road westbound at J25, Cardonald in Renfrew, because of roadworks.</line>
+		</summary>
+	</location>
+	<location id="1834511" category="roadworks" severity="medium" start="2007-08-09T10:11:36+0" end="2007-08-25T23:59:00+0">
+		<point lat="55.910259" lng="-4.472674"/>
+		<summary class="regionSummary">
+			<title>A898</title>
+			<line>A898 Renfrewshire - Lane closed both ways at the M898 J1 junction in Erskine, because of cable laying.</line>
+		</summary>
+	</location>
+	<location id="1605249" category="underground services work" severity="medium" start="2007-04-18T13:09:04+0" end="2007-08-30T00:29:00+0">
+		<point lat="55.870536" lng="-4.299599"/>
+		<summary class="regionSummary">
+			<title>Dumbarton Road</title>
+			<line>Glasgow City - Gas main work on Dumbarton Road both ways between the B808 Cooper's Well Street junction and the Thornwood Avenue junction in Partick.</line>
+		</summary>
+	</location>
+</page>
