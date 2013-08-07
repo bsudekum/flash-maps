@@ -20,7 +20,7 @@
 			[Bindable]private var _initialLong:Number = -111.680145;
 			[Bindable]private var _initialZoom:Number = 6;
 			private var _mouseWheelZoomCenter:Location;
-			private var _mouseWheelZoom:int;       
+			private var _mouseWheelZoom:int;      
 			
 			private function init():void
 			{
