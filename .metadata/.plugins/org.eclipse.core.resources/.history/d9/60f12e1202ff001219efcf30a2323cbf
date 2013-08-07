@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="955"
+			   minHeight="600"
+			   xmlns:os="http://openscales.org"
+			   creationComplete="initMap();">
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<os:Map id="fxmap"
+			width="100%"
+			height="100%"
+			zoom="11"
+			center="4.78783,45.68800"
+			x="0"
+			y="0">
+		<os:Mapnik name="Mapnik"/>
+		
+		<os:MousePosition x="10"
+						  y="{fxmap.height-20}"
+						  displayProjection="EPSG:4326"/>
+		<os:DragHandler/>
+		<os:ClickHandler/>
+		<os:WheelHandler/>
+	</os:Map>
+	<os:PanZoom map="{map}"
+				x="{fxmap.x+10}"
+				y="{fxmap.y+10}"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.openscales.core.layer.TMS;
+			import org.openscales.geometry.basetypes.Bounds;
+			import org.openscales.geometry.basetypes.Location;
+			import org.openscales.proj4as.ProjProjection;
+			import flash.system.Security;
+			
+			public class GoogleMap extends TMS {
+				private var _serviceVersion:String = "1.0.0";       
+				private var _tileOrigin:Location = null;        
+				private var _format:String = "png";     
+				private var _layerName:String;
+				private var _type:String;
+				private var _proxy_url:String="http://proxysite.com/swf/proxy.php?url=";
+				
+				public static const HYBRID:String="mt0.google.com/vt/lyrs=h@159000000&hl=ru";
+				public static const SAT:String="khm0.google.ru/kh/v=90";
+				public static const STANDART:String="mt0.google.com/vt/lyrs=m@159000000&hl=ru";
+				
+				public function GoogleMap(name:String, url:String, layerName:String="", type:String=SAT)
+				{
+					super(name, url, layerName);
+					//flash.system.Security.allowDomain("mt0.google.com");
+					/*  Security.loadPolicyFile("http://google.com/crossdomain.xml");
+					Security.allowDomain( "*" );
+					Security.allowInsecureDomain( "*" );*/
+					this.projection = new ProjProjection("EPSG:900913");
+					this._layerName = layerName;
+					_type=type;
+					this.maxExtent = new Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34);
+				}
+				//-------------------------------------------------------------------
+				override public function getURL(bounds:Bounds):String {
+					var res:Number = this.map.resolution;
+					if(this._tileOrigin==null) {
+						this._tileOrigin = new Location(this.maxExtent.left,this.maxExtent.bottom);
+					}
+					
+					var x:Number = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileWidth));
+					var y:Number = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileHeight));
+					var z:Number = this.map.zoom;
+					var limit:Number = Math.pow(2, z);
+					
+					
+					x = ((x % limit) + limit) % limit;
+					y = ((y % limit) + limit) % limit;
+					var url:String =_proxy_url+escape(_type + "&z=" + z + "&x=" + x + "&y=" + y); 
+					
+					if (this.altUrls != null) {
+						url = this.selectUrl(this.url, this.getUrls());
+					}
+					
+					return url ;
+				}
+			}
+			}
+			import org.openscales.basetypes.Location;
+			import org.openscales.core.Map;
+			import org.openscales.core.feature.CustomMarker;
+			import org.openscales.core.feature.PointFeature;
+			import org.openscales.core.layer.FeatureLayer;
+			import org.openscales.core.style.Style;
+			import org.openscales.geometry.Point;
+			import org.openscales.proj4as.ProjProjection;
+			import org.openscales.core.Map;
+			import org.openscales.core.feature.PointFeature;
+			import org.openscales.core.layer.FeatureLayer;
+			import org.openscales.core.style.Style;
+			import org.openscales.geometry.Point;
+			import org.openscales.proj4as.ProjProjection;
+			import org.openscales.core.feature.CustomMarker;
+			
+			[Bindable] private var map:Map = null;
+			private function initMap():void {
+				map = fxmap.map;
+				var markers:FeatureLayer = new FeatureLayer("NameOfYourLayerWithMarkers");
+				markers.projection = new ProjProjection("EPSG:4326");
+				markers.generateResolutions(19);
+				markers.style = Style.getDefaultPointStyle();
+				
+				var marker:PointFeature=PointFeature.createPointFeature(new Location(4.85980,45.75336));
+				markers.addFeature(marker);
+				map.addLayer(markers);
+			}
+		]]>
+	</fx:Script>
+	
+</s:Application>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="955"
+			   minHeight="600"
+			   xmlns:os="http://openscales.org"
+			   creationComplete="initMap();">
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<os:Map id="fxmap"
+			width="100%"
+			height="100%"
+			zoom="11"
+			center="4.78783,45.68800"
+			x="0"
+			y="0">
+		<os:Mapnik name="Mapnik"/>
+		<os:IGNGeoRMSecurity key="xxxxxxxx"
+							 layers="ORTHOPHOTOS"
+							 proxy="http://openscales.org/proxy.php?url="/>
+		
+		<os:WMSC id="ortho"
+				 name="ORTHOPHOTOS"
+				 url="http://wxs.ign.fr/geoportail/wmsc"
+				 layers="ORTHOIMAGERY.ORTHOPHOTOS"
+				 format="image/jpeg"
+				 resolutions="39135.75,19567.875,9783.9375,4891.96875,2445.984375,2048,1024,512,256,128,64,32,16,8,4,2,1,0.5,0.25,0.125,0.0625"
+				 projection="IGNF:GEOPORTALFXX"
+				 minZoomLevel="5"
+				 maxZoomLevel="17"
+				 maxExtent="-1048576,3670016,2097152,6815744"
+				 exceptions="text/xml"/>
+		<os:MousePosition x="10"
+						  y="{fxmap.height-20}"
+						  displayProjection="EPSG:4326"/>
+		<os:DragHandler/>
+		<os:ClickHandler/>
+		<os:WheelHandler/>
+	</os:Map>
+	<os:PanZoom map="{map}"
+				x="{fxmap.x+10}"
+				y="{fxmap.y+10}"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.openscales.core.feature.CustomMarker;
+			import org.openscales.core.layer.TMS;
+			import org.openscales.geometry.basetypes.Bounds;
+			import org.openscales.geometry.basetypes.Location;
+			import org.openscales.proj4as.ProjProjection;
+			import flash.system.Security;
+			
+			import org.openscales.core.Map;
+			import org.openscales.core.feature.CustomMarker;
+			import org.openscales.core.feature.PointFeature;
+			import org.openscales.core.layer.FeatureLayer;
+			import org.openscales.core.style.Style;
+			import org.openscales.geometry.Point;
+			import org.openscales.proj4as.ProjProjection;
+			import org.openscales.core.Map;
+			import org.openscales.core.feature.PointFeature;
+			import org.openscales.core.layer.FeatureLayer;
+			import org.openscales.core.style.Style;
+			import org.openscales.geometry.Point;
+			import org.openscales.proj4as.ProjProjection;
+			import org.openscales.core.feature.CustomMarker;
+			
+			[Bindable] private var map:Map = null;
+			private function initMap():void {
+				map = fxmap.map;
+				var markers:FeatureLayer = new FeatureLayer("NameOfYourLayerWithMarkers");
+				markers.projection = new ProjProjection("EPSG:4326");
+				markers.generateResolutions(19);
+				markers.style = Style.getDefaultPointStyle();
+				
+				//add the first marker
+				var marker:PointFeature = PointFeature.createPointFeature(new Location(4.85680,45.75336));
+				markers.addFeature(marker);
+				
+				//add a second marker
+				marker = PointFeature.createPointFeature(new Location(7.85780,40.75336));
+				markers.addFeature(marker);
+				
+				//add marker with different symbol, writing url address
+				markers.addFeature(CustomMarker.
+					createUrlBasedMarker("https://a.tiles.mapbox.com/v3/marker/pin-l+f56098.png",
+						new Location(4.85580,45.75336)));
+				
+				//add the layer
+				map.addLayer(markers);
+			}
+		]]>
+	</fx:Script>
+	
+</s:Application>

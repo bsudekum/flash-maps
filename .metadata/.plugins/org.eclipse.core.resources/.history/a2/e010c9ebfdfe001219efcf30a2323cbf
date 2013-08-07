@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="955"
+			   minHeight="600"
+			   xmlns:os="http://openscales.org"
+			   creationComplete="initMap();">
+	
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<os:Map id="fxmap"
+			width="100%"
+			height="100%"
+			zoom="11"
+			center="4.78783,45.68800"
+			x="0"
+			y="0">
+		<os:Mapnik name="Mapnik"/>
+		<os:MousePosition x="10"
+						  y="{fxmap.height-20}"
+						  displayProjection="EPSG:4326"/>
+		<os:DragHandler/>
+		<os:ClickHandler/>
+		<os:WheelHandler/>
+	</os:Map>
+	<os:PanZoom map="{map}"
+				x="{fxmap.x+10}"
+				y="{fxmap.y+10}"/>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.openscales.core.Map;
+			import org.openscales.core.feature.PointFeature;
+			import org.openscales.core.layer.FeatureLayer;
+			import org.openscales.core.style.Style;
+			import org.openscales.geometry.Point;
+			import org.openscales.proj4as.ProjProjection;
+			import org.openscales.core.feature.CustomMarker;
+			
+			[Bindable] private var map:Map = null;
+			private function initMap():void {
+				map = fxmap.map;
+			}
+		]]>
+	</fx:Script>
+	
+</s:Application>

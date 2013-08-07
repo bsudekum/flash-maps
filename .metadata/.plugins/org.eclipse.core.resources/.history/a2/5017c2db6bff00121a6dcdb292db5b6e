@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:mx1="library://ns.adobe.com/flex/halo" 
+			   minWidth="1024" minHeight="768" creationComplete="init()" viewSourceURL="srcview/index.html" xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			
+			import mx.core.UIComponent;
+			import com.modestmaps.TweenMap;    
+			import com.modestmaps.mapproviders.MapBox;
+			import com.modestmaps.geo.Location;
+			import com.modestmaps.extras.ZoomSlider;
+			import com.modestmaps.extras.HandCursor;
+			import com.asmarkers.core.Marker;
+
+			
+			[Bindable]private var _map:TweenMap;        
+			private var _mapUI:UIComponent; 
+			[Bindable]private var _initialLat:Number = 40.668903;
+			[Bindable]private var _initialLong:Number = -111.680145;
+			[Bindable]private var _initialZoom:Number = 6;
+			private var _mouseWheelZoomCenter:Location;
+			private var _mouseWheelZoom:int;      
+			
+			private function init():void
+			{
+				_map = new TweenMap(mappanel.width, mappanel.height, true, new MapBox());    
+				_map.setCenterZoom(new Location(_initialLat, _initialLong), _initialZoom); 
+				mapCore();
+			}
+			
+			private function mapCore():void
+			{
+				_map.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelHandler);    
+				_mapUI = new UIComponent();
+				_mapUI.addChild(_map);     
+				var zoomslider:ZoomSlider = new ZoomSlider(_map);
+				zoomslider.x = mappanel.width - zoomslider.width*2;
+				zoomslider.y = 30;
+				_mapUI.addChild(zoomslider);    
+				var handcursor:HandCursor = new HandCursor(_map);
+				_mapUI.addChild(handcursor);
+				mappanel.addElement(_mapUI);    
+			}
+			
+			private function mouseWheelHandler(e:MouseEvent):void {
+				if (e.delta < 0) {
+					_map.zoomOut();
+				}
+				else if (e.delta > 0) {
+					_map.zoomIn();
+				}
+				_mouseWheelZoomCenter = _map.getCenter();
+				_mouseWheelZoom = _map.getZoom();
+			} 
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:BorderContainer id="mappanel" width="100%" height="97%"/> 
+	
+</s:Application>
