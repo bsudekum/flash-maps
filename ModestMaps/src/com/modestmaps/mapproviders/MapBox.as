@@ -28,7 +28,13 @@ package com.modestmaps.mapproviders
 	        if (sourceCoord.row < 0 || sourceCoord.row >= Math.pow(2, coord.zoom)) {
 	        	return [];
 	        }
-	        return [ 'http://c.tiles.mapbox.com/v3/bobbysud.map-rm7pg202/'+(sourceCoord.zoom)+'/'+(sourceCoord.column)+'/'+(sourceCoord.row)+'.png' ];
+			var text = "";
+			var possible = "ABCD";
+			
+			for( var i=0; i < 1; i++ )
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+			var sourceCoord:Coordinate = sourceCoordinate(coord);
+	        return [ 'http://' + text + '.tiles.mapbox.com/v3/bobbysud.map-rm7pg202/'+(sourceCoord.zoom)+'/'+(sourceCoord.column)+'/'+(sourceCoord.row)+'.png' ];
 	    }
 	    
 	}

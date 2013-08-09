@@ -28,6 +28,7 @@
 			import mx.rpc.events.FaultEvent;
 			
 			import com.modestmaps.mapproviders.OpenStreetMapProvider;
+			import com.modestmaps.mapproviders.OpenStreetMapProvider;
 			import com.modestmaps.geo.Location;
 			
 			import com.netthreads.traffic.vo.EventVO;

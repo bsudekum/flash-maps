@@ -1,0 +1,12 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace g "http://geoportail.fr";
+
+g|LayerCatalog {
+	skin-class: ClassReference("geoportalFx.control.layercatalog.FxLayerCatalogDefaultSkin");
+}
+
+g|AbstractPopup {
+	skin-class: ClassReference("geoportalFx.control.abstract.FxAbstractPopupDefaultSkin");
+}
