@@ -127,13 +127,7 @@
 		]]>
 	</fx:Script>
 	
-	<s:controlBarLayout>
-		<s:VerticalLayout gap="10"
-						  paddingBottom="7"
-						  paddingLeft="10"
-						  paddingRight="10"
-						  paddingTop="7"/>
-	</s:controlBarLayout>
+	
 	<s:controlBarContent>
 		
 		<s:HGroup width="100%" verticalAlign="middle">
@@ -169,7 +163,7 @@
 		</s:HGroup>
 	</s:controlBarContent>
 	
-	<esri:Map level="9" wrapAround180="true">
+	<esri:Map level="9" wrapAround180="true" scaleBarVisible="false">
 		<esri:center>
 			<esri:WebMercatorMapPoint lon="-116.693230" lat="33.820853"/>
 		</esri:center>
@@ -177,7 +171,7 @@
 							copyright="MapBox"
 							loadError="webTiledLayer_loadErrorHandler(event)"
 							subDomains="{ABCD}"
-							urlTemplate="{MB_TERRAIN_URL}"/>
+							urlTemplate="{MB_TERRAIN_URL}" />
 	</esri:Map>
 	
 	<s:Panel id="customWebTileLayerPanel"
