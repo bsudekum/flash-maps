@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:esri="http://www.esri.com/2008/ags"
+			   pageTitle="WebTiled Layer">
+	<!--
+	Description:
+	This sample demonstrates how to add various third-party (tiled|cached)
+	map services to your ArcGIS API for Flex application using the WebTiledLayer class.
+	Select one of the various options from the drop down list or load a custom service
+	using the "Load custom web tiled layer" button.
+	
+	Documentation:
+	For more information, see the API documentation.
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/Map.html
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/Map.html#center
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/Map.html#level
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/geometry/WebMercatorMapPoint.html
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/layers/TiledMapServiceLayer.html
+	http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/layers/WebTiledLayer.html
+	-->
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.events.LayerEvent;
+			
+			import flash.net.navigateToURL;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			private static const MB_COLOR_URL:String = "http://{subDomain}.tiles.mapbox.com/v3/bobbysud.map-uufxk4qo/{level}/{col}/{row}.png";
+			private static const MB_SAT_URL:String = "http://{subDomain}.tiles.mapbox.com/v3/bobbysud.map-l4i2m7nd/{level}/{col}/{row}.png";
+			private static const MB_TERRAIN_URL:String = "http://{subDomain}.tiles.mapbox.com/v3/bobbysud.map-1tu2sadu/{level}/{col}/{row}.png";
+			
+			
+			//subdomains
+			private static const MQ_SUBDOMAINS:Array = [ "mtile01", "mtile02", "mtile03", "mtile04" ];
+			private static const ABC:Array = [ "a", "b", "c" ];
+			private static const ABCD:Array = [ "a", "b", "c", "d" ];
+			
+			protected function ddlWebTiledLayer_changeHandler(event:IndexChangeEvent):void
+			{
+				var selectedItem:Object = DropDownList(event.currentTarget).selectedItem;
+				webTiledLayer.urlTemplate = selectedItem.urlTemplate;
+				webTiledLayer.copyright = selectedItem.copyright;
+				webTiledLayer.subDomains = selectedItem.subDomains;
+			}
+			
+			protected function loadWebTiledLayerButton_clickHandler(event:MouseEvent):void
+			{
+				if (customURLTemplate.text != "")
+				{
+					var customWebTiledLayerObject:Object = {};
+					if (customSubDomains.text != "")
+					{
+						var subDomainsArray:Array = customSubDomains.text.split(",");
+						if (subDomainsArray.length >= 0)
+						{
+							customWebTiledLayerObject.subDomains = subDomainsArray;
+						}
+						else
+						{
+							customWebTiledLayerObject.subDomains = null;
+						}
+					}
+					else
+					{
+						customWebTiledLayerObject.subDomains = null;
+					}
+					customWebTiledLayerObject.urlTemplate = customURLTemplate.text;
+					customWebTiledLayerObject.copyright = customCopyright.text;
+					
+					setWebTiledLayer(customWebTiledLayerObject);
+					customWebTileLayerPanel.visible = false;
+				}
+				else
+				{
+					var msg:String = "URL Template must not be blank.\nTo read more about WebTiledLayer click 'OK'";
+					Alert.show(msg, "WebTiledLayer Information", Alert.OK | Alert.CANCEL, this, onAlertClose, null, Alert.CANCEL);
+					function onAlertClose(event:CloseEvent):void
+					{
+						switch (event.detail) {
+							case Alert.OK:
+							{
+								navigateToURL(new URLRequest("http://resources.arcgis.com/en/help/flex-api/apiref/com/esri/ags/layers/WebTiledLayer.html"), "_blank");
+								break;
+							}
+							case Alert.CANCEL:
+							{
+								customURLTemplate.selectAll();
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			protected function setWebTiledLayer(value:Object):void
+			{
+				if (value)
+				{
+					webTiledLayer.urlTemplate = value.urlTemplate;
+					webTiledLayer.copyright = value.copyright;
+					
+					if (value.subDomains != null)
+					{
+						webTiledLayer.subDomains = value.subDomains;
+					}
+				}
+			}
+			
+			protected function clearWebTiledLayerFormButton_clickHandler(event:MouseEvent):void
+			{
+				customCopyright.text = "";
+				customSubDomains.text = "";
+				customURLTemplate.text = "";
+			}
+			
+			protected function webTiledLayer_loadErrorHandler(event:LayerEvent):void
+			{
+				Alert.show(event.fault.faultString + "\n\n" + event.fault.faultDetail, "WebTiledLayer load error " + event.fault.faultCode);
+				
+			}
+		]]>
+	</fx:Script>
+	
+	<s:controlBarLayout>
+		<s:VerticalLayout gap="10"
+						  paddingBottom="7"
+						  paddingLeft="10"
+						  paddingRight="10"
+						  paddingTop="7"/>
+	</s:controlBarLayout>
+	<s:controlBarContent>
+		
+		<s:HGroup width="100%" verticalAlign="middle">
+			<s:Label text="Select a MapBox Map "/>
+			<s:DropDownList id="ddlWebTiledLayer"
+							width="220"
+							change="ddlWebTiledLayer_changeHandler(event)"
+							requireSelection="true">
+				<s:dataProvider>
+					<s:ArrayList>
+												
+						<fx:Object copyright="Mapbox Terrain"
+								   label="MapBox Terrain"
+								   subDomains="{ABCD}"
+								   urlTemplate="{MB_TERRAIN_URL}"/>
+						
+						<fx:Object copyright="Mapbox Custom"
+								   label="MapBox Custom"
+								   subDomains="{ABCD}"
+								   urlTemplate="{MB_COLOR_URL}"/>
+						
+						<fx:Object copyright="Mapbox Satellite"
+								   label="MapBox Satellite"
+								   subDomains="{ABCD}"
+								   urlTemplate="{MB_SAT_URL}"/>
+
+					</s:ArrayList>
+				</s:dataProvider>
+			</s:DropDownList>
+			
+			
+			
+		</s:HGroup>
+	</s:controlBarContent>
+	
+	<esri:Map level="9" wrapAround180="true">
+		<esri:center>
+			<esri:WebMercatorMapPoint lon="-116.693230" lat="33.820853"/>
+		</esri:center>
+		<esri:WebTiledLayer id="webTiledLayer"
+							copyright="MapBox"
+							loadError="webTiledLayer_loadErrorHandler(event)"
+							subDomains="{ABCD}"
+							urlTemplate="{MB_TERRAIN_URL}"/>
+	</esri:Map>
+	
+	<s:Panel id="customWebTileLayerPanel"
+			 horizontalCenter="0"
+			 title="Custom Web Tiled Layer"
+			 verticalCenter="0"
+			 visible="false">
+		<s:Form width="100%" backgroundColor="0xEEEEEE">
+			<s:layout>
+				<s:FormLayout gap="-5"/>
+			</s:layout>
+			<s:FormItem label="Copyright:">
+				<s:TextArea id="customCopyright"
+							width="220" height="50"
+							editable="true"
+							text="Mapbox Light"/>
+			</s:FormItem>
+			<s:FormItem label="subdomains:">
+				<s:TextArea id="customSubDomains"
+							width="220" height="50"
+							editable="true"
+							text="a,b,c,d"/>
+			</s:FormItem>
+			<s:FormItem label="URL template:">
+				<s:TextArea id="customURLTemplate"
+							width="220" height="50"
+							editable="true"
+							text="http://\{subDomain}.tiles.mapbox.com/v3/mapbox.mapbox-light/\{level}/\{col}/\{row}.png"/>
+			</s:FormItem>
+			<s:Spacer height="20"/>
+			<s:HGroup width="100%" horizontalAlign="center">
+				
+			</s:HGroup>
+		</s:Form>
+	</s:Panel>
+</s:Application>
